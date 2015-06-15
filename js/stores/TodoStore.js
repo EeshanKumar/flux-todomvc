@@ -30,7 +30,8 @@ function create(text) {
   _todos[id] = {
     id: id,
     complete: false,
-    text: text
+    text: text.toLowerCase(),
+    rotateCounter: 'lowerCase',
   };
 }
 
@@ -63,6 +64,43 @@ function updateAll(updates) {
  */
 function destroy(id) {
   delete _todos[id];
+}
+
+/**
+ * Rotate the case of a TODO item.
+ * @param  {string} id
+ */
+function rotateCase(id) {
+  switch (_todos[id].rotateCounter) {
+    case 'lowerCase':
+      _todos[id].text = toTitleCase(_todos[id].text);
+      _todos[id].rotateCounter = 'titleCase';
+      break;
+
+    case 'titleCase':
+      _todos[id].text = _todos[id].text.toUpperCase();
+      _todos[id].rotateCounter = 'upperCase';
+      break;
+
+    case 'upperCase':
+      _todos[id].text = _todos[id].text.toLowerCase();
+      _todos[id].rotateCounter = 'lowerCase';
+      break;
+
+    default:
+      //Reset rotateCounter
+      _todos[id].rotateCounter = 'lowerCase';
+      break;
+  }
+  function toTitleCase(str) {
+    var strArray = str.split(' ');
+    var newArray = [];
+    for (var i = 0; i < strArray.length; i++) {
+      var intermediate = strArray[i].toLowerCase();
+      newArray.push(intermediate.charAt(0).toUpperCase() + intermediate.slice(1));
+    }
+    return newArray.join(' ');
+  }
 }
 
 /**
@@ -160,6 +198,11 @@ AppDispatcher.register(function(action) {
 
     case TodoConstants.TODO_DESTROY:
       destroy(action.id);
+      TodoStore.emitChange();
+      break;
+
+    case TodoConstants.TODO_ROTATE_CASE:
+      rotateCase(action.id);
       TodoStore.emitChange();
       break;
 

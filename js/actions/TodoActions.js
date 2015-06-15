@@ -72,6 +72,16 @@ var TodoActions = {
   },
 
   /**
+   * @param  {string} id
+   */
+  rotateCase: function(id) {
+    AppDispatcher.dispatch({
+      actionType: TodoConstants.TODO_ROTATE_CASE,
+      id: id
+    });
+  },
+
+  /**
    * Delete all the completed ToDos
    */
   destroyCompleted: function() {
